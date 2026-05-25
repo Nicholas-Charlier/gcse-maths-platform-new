@@ -8,7 +8,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white font-medium text-xs tracking-widest">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-white font-medium text-xs tracking-wide">
             MWM
           </div>
           <div className="flex flex-col leading-none">
