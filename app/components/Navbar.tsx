@@ -8,11 +8,11 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-white font-medium text-xs tracking-wide">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-300 text-white font-medium text-xs tracking-wide">
             MWM
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-[11px] font-semibold tracking-[0.2em] text-indigo-600 uppercase">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-blue-300 uppercase">
               Maths with
             </span>
             <span className="text-[18px] font-black text-gray-900 tracking-tight leading-none">
@@ -30,7 +30,7 @@ export default function Navbar() {
             <li key={item.label}>
               <Link
                 href={item.href}
-                className="px-4 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-indigo-600 transition-all"
+                className="px-4 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-blue-300 transition-all"
               >
                 {item.label}
               </Link>
@@ -40,7 +40,7 @@ export default function Navbar() {
 
         {/* User icon with dropdown */}
         <div className="relative group flex items-center">
-          <button className="text-gray-500 hover:text-indigo-600 transition-colors flex items-center">
+          <button className="text-gray-500 hover:text-blue-300 transition-colors flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -63,13 +63,13 @@ export default function Navbar() {
               <div className="flex flex-col p-1">
                 <Link
                   href="/login"
-                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-300 transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-300 transition-colors"
                 >
                   Sign up
                 </Link>
