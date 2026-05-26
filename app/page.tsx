@@ -111,7 +111,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       {/* Hero */}
-      <section className="flex flex-col items-center pt-32 px-6">
+      <section className="flex flex-col items-center pt-32 pb-32 px-6">
         <h1 className="text-4xl md:text-5xl font-black text-gray-900 text-center max-w-3xl leading-tight">
           Get Ahead. Get a 9.{" "}
           <span className="text-blue-300">GCSE & IGCSE Maths.</span>
@@ -128,7 +128,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="py-32 px-6 w-full">
+      <section className="py-32 px-6 w-full bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
             Why Maths with Madison?
