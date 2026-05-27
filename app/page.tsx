@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useUser } from "@/app/lib/hooks/useUser";
 
 const VideoIcon = ({ size = 36 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
@@ -107,6 +108,7 @@ const features = [
 
 export default function Home() {
   const [active, setActive] = useState(0);
+  const { firstName } = useUser();
 
   return (
     <main className="min-h-screen flex flex-col items-center">
@@ -119,12 +121,21 @@ export default function Home() {
         <p className="mt-6 text-center text-lg text-gray-500 max-w-xl leading-relaxed">
           The complete maths programme designed by an expert tutor to get you ahead of the competition.
         </p>
-        <Link
-          href="/signup"
-          className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
-        >
-          Learn with us
-        </Link>
+        {firstName ? (
+          <Link
+            href="/dashboard"
+            className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
+          >
+            Go to Dashboard
+          </Link>
+        ) : (
+          <Link
+            href="/signup"
+            className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
+          >
+            Learn with us
+          </Link>
+        )}
       </section>
 
       {/* Features */}

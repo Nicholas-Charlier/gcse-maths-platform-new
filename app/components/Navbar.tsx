@@ -1,31 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useUser } from "@/app/lib/hooks/useUser";
 import { createClient } from "@/app/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setFirstName(user.user_metadata?.first_name ?? null);
-      }
-      setLoading(false);
-    });
-  }, []);
-
-  const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  };
+  const { firstName, loading } = useUser();
 
   return (
     <nav className="w-full border-b border-gray-100 bg-white px-6 py-0 shadow-sm">
@@ -48,19 +28,26 @@ export default function Navbar() {
 
         {/* Nav links */}
         <ul className="flex items-center gap-1">
-          {[
-            { label: "Meet Madison", href: "/meet-madison" },
-            { label: "Pricing", href: "/pricing" },
-          ].map((item) => (
-            <li key={item.label}>
-              <Link
-                href={item.href}
-                className="px-4 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-blue-300 transition-all"
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
+          {!loading && !firstName && (
+            <>
+              <li>
+                <Link
+                  href="/meet-madison"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-blue-300 transition-all"
+                >
+                  Meet Madison
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/pricing"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-blue-300 transition-all"
+                >
+                  Pricing
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
 
         {/* Right side */}
@@ -146,7 +133,7 @@ export default function Navbar() {
             <>
               <div className="h-5 w-px bg-gray-200" />
               <Link
-                href="/pricing"
+                href="/upgrade"
                 className="rounded-full bg-blue-300 px-4 py-1.5 text-sm font-semibold text-white hover:bg-blue-400 transition-colors"
               >
                 Upgrade your plan
