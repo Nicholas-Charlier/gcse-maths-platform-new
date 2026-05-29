@@ -106,31 +106,72 @@ const features = [
   },
 ];
 
+const featureSections = [
+  {
+    label: "Video Lessons",
+    heading: "Learn from an expert, at your own pace.",
+    description:
+      "Every video is recorded by Madison — a tutor with hundreds of hours of one-to-one experience. Clear, structured, and designed around what examiners actually want to see. Watch as many times as you need, whenever you need.",
+    bullets: ["Every GCSE & IGCSE topic covered", "Taught by an experienced tutor", "Rewatch anytime, on any device"],
+    flip: false,
+  },
+  {
+    label: "Exercises",
+    heading: "Practice that covers the whole syllabus.",
+    description:
+      "Hand-picked exercises designed to test you on every corner of the specification. Graded by difficulty so you can build confidence before tackling the harder material.",
+    bullets: ["Covers the full syllabus", "Graded by difficulty", "Instant feedback on every answer"],
+    flip: true,
+  },
+  {
+    label: "Worked Examples",
+    heading: "Never stare at a question not knowing where to start.",
+    description:
+      "Madison takes the hardest questions that trip students up and breaks them down in a digestible, understandable way. So when it comes to the real thing, you'll always know how to begin.",
+    bullets: ["Hardest exam questions broken down", "Step-by-step approach", "Taught the way examiners want to see it"],
+    flip: false,
+  },
+  {
+    label: "Prediction Papers",
+    heading: "Papers built around what's likely to come up.",
+    description:
+      "Carefully produced by analysing past papers and examiner reports. Each prediction paper is designed to put you in the best possible position for the real thing.",
+    bullets: ["Based on real past paper patterns", "Full mark schemes included", "Timed exam conditions"],
+    flip: true,
+  },
+  {
+    label: "Flashcards",
+    heading: "Quick-fire revision, anywhere.",
+    description:
+      "Bite-sized flashcard decks covering key formulas, definitions, and concepts. Perfect for squeezing revision into small pockets of time — on the bus, between lessons, the night before.",
+    bullets: ["Key formulas & definitions", "Topic-by-topic decks", "Quick and effective"],
+    flip: false,
+  },
+];
+
+const Placeholder = () => (
+  <div className="w-full h-full min-h-[340px] rounded-2xl bg-gray-100 border border-gray-200 flex flex-col items-center justify-center gap-3">
+    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="3" y="3" width="14" height="14" rx="3" stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="3 2" />
+        <line x1="10" y1="7" x2="10" y2="13" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="7" y1="10" x2="13" y2="10" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </div>
+    <p className="text-sm text-gray-400 font-medium">Coming soon</p>
+  </div>
+);
+
 export default function Home() {
   const [active, setActive] = useState(0);
   const { firstName } = useUser();
 
   return (
     <main className="min-h-screen flex flex-col items-center">
-      {/* Hero */}
-      <section className="relative flex flex-col items-center pt-32 pb-32 px-6 overflow-hidden w-full">
-        {/* Graph paper grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #d1d5db 1px, transparent 1px),
-              linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px",
-            opacity: 0.4,
-            maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.35) 100%)",
-            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.35) 100%)",
-          }}
-        />
-        {/* Content sits above the grid */}
-        <div className="relative z-10 flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 text-center max-w-3xl leading-tight">
+      {/* Hero — no grid */}
+      <section className="flex flex-col items-center pt-32 pb-32 px-6 w-full bg-slate-900">
+        <div className="flex flex-col items-center">
+          <h1 className="text-4xl md:text-5xl font-black text-white text-center max-w-3xl leading-tight">
             Get Ahead. Get a 9.{" "}
             <span className="text-blue-300">GCSE & IGCSE Maths.</span>
           </h1>
@@ -155,7 +196,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features tab section */}
       <section className="py-32 px-6 w-full bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
@@ -166,18 +207,16 @@ export default function Home() {
           </p>
 
           <div className="flex gap-12">
-            {/* Left list */}
             <div className="flex flex-col gap-3 min-w-[260px]">
               {features.map((f, i) => (
                 <button
                   key={f.title}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => setActive(i)}
-                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all duration-200 ${
-                    active === i
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all duration-200 ${active === i
                       ? "bg-blue-50 text-blue-600 font-semibold"
                       : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
-                  }`}
+                    }`}
                 >
                   <span>{f.icon}</span>
                   <span className="text-base font-medium">{f.title}</span>
@@ -188,7 +227,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Right panel */}
             <div className="flex-1 rounded-3xl bg-blue-50 p-12">
               <div key={active} className="animate-fadeIn">
                 <div className="mb-6">{features[active].largeIcon}</div>
@@ -209,6 +247,55 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Feature deep-dive sections — with grid background */}
+      <section className="relative w-full py-10 px-6 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #d1d5db 1px, transparent 1px),
+              linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
+            `,
+            backgroundSize: "40px 40px",
+            opacity: 0.5,
+            maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.9) 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.9) 100%)",
+          }}
+        />
+        <div className="relative z-10 max-w-6xl mx-auto flex flex-col gap-10">
+          {featureSections.map((f) => (
+            <div
+              key={f.label}
+              className={`flex flex-col md:flex-row items-center gap-10 rounded-3xl p-10 bg-white border border-gray-100 shadow-sm ${f.flip ? "md:flex-row-reverse" : ""
+                }`}
+            >
+              <div className="w-full md:w-1/2">
+                <Placeholder />
+              </div>
+              <div className="w-full md:w-1/2 flex flex-col gap-5">
+                <span className="text-sm font-semibold text-blue-400 uppercase tracking-widest">
+                  {f.label}
+                </span>
+                <h3 className="text-3xl font-bold text-gray-900 leading-snug">
+                  {f.heading}
+                </h3>
+                <p className="text-gray-500 text-lg leading-relaxed">
+                  {f.description}
+                </p>
+                <ul className="flex flex-col gap-2 mt-2">
+                  {f.bullets.map((b) => (
+                    <li key={b} className="flex items-center gap-3 text-base text-gray-700 font-medium">
+                      <span className="w-2 h-2 rounded-full bg-blue-300 inline-block shrink-0" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </main>
