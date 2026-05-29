@@ -113,29 +113,46 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       {/* Hero */}
-      <section className="flex flex-col items-center pt-32 pb-32 px-6">
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 text-center max-w-3xl leading-tight">
-          Get Ahead. Get a 9.{" "}
-          <span className="text-blue-300">GCSE & IGCSE Maths.</span>
-        </h1>
-        <p className="mt-6 text-center text-lg text-gray-500 max-w-xl leading-relaxed">
-          The complete maths programme designed by an expert tutor to get you ahead of the competition.
-        </p>
-        {firstName ? (
-          <Link
-            href="/dashboard"
-            className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
-          >
-            Go to Dashboard
-          </Link>
-        ) : (
-          <Link
-            href="/signup"
-            className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
-          >
-            Learn with us
-          </Link>
-        )}
+      <section className="relative flex flex-col items-center pt-32 pb-32 px-6 overflow-hidden w-full">
+        {/* Graph paper grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #d1d5db 1px, transparent 1px),
+              linear-gradient(to bottom, #d1d5db 1px, transparent 1px)
+            `,
+            backgroundSize: "40px 40px",
+            opacity: 0.4,
+            maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.25) 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%)",
+          }}
+        />
+        {/* Content sits above the grid */}
+        <div className="relative z-10 flex flex-col items-center">
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 text-center max-w-3xl leading-tight">
+            Get Ahead. Get a 9.{" "}
+            <span className="text-blue-300">GCSE & IGCSE Maths.</span>
+          </h1>
+          <p className="mt-6 text-center text-lg text-gray-500 max-w-xl leading-relaxed">
+            The complete maths programme designed by an expert tutor to get you ahead of the competition.
+          </p>
+          {firstName ? (
+            <Link
+              href="/dashboard"
+              className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/signup"
+              className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
+            >
+              Learn with us
+            </Link>
+          )}
+        </div>
       </section>
 
       {/* Features */}
