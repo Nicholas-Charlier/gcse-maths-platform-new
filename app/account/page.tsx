@@ -48,7 +48,9 @@ export default function AccountPage() {
     setInitials(`${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase())
     setSaveLoading(false)
     setSaveSuccess(true)
-    setTimeout(() => setSaveSuccess(false), 3000)
+    setTimeout(() => {
+      window.location.reload()
+    }, 800)
   }
 
   const handleResetPassword = async () => {
