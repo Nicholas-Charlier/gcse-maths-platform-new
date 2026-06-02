@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useUser } from "@/app/lib/hooks/useUser";
+import { useFirstName } from "@/app/lib/hooks/useFirstName";
 
 const VideoIcon = ({ size = 36 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
@@ -164,7 +164,7 @@ const Placeholder = () => (
 
 export default function Home() {
   const [active, setActive] = useState(0);
-  const { firstName } = useUser();
+  const { firstName, loading } = useFirstName();
 
   return (
     <main className="min-h-screen flex flex-col items-center">
@@ -178,20 +178,16 @@ export default function Home() {
           <p className="mt-6 text-center text-lg text-gray-500 max-w-xl leading-relaxed">
             The complete maths programme designed by an expert tutor to get you ahead of the competition.
           </p>
-          {firstName ? (
-            <Link
-              href="/dashboard"
-              className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
-            >
-              Go to Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/signup"
-              className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
-            >
-              Learn with us
-            </Link>
+          {!loading && (
+            firstName ? (
+              <Link href="/dashboard" className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link href="/signup" className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors">
+                Learn with us
+              </Link>
+            )
           )}
         </div>
       </section>
@@ -214,8 +210,8 @@ export default function Home() {
                   onMouseEnter={() => setActive(i)}
                   onClick={() => setActive(i)}
                   className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all duration-200 ${active === i
-                      ? "bg-blue-50 text-blue-600 font-semibold"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                    ? "bg-blue-50 text-blue-600 font-semibold"
+                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
                     }`}
                 >
                   <span>{f.icon}</span>

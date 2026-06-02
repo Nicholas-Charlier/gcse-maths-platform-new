@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useUser } from "@/app/lib/hooks/useUser";
+import { useFirstName } from "@/app/lib/hooks/useFirstName";
 import { createClient } from "@/app/lib/supabase";
 
 export default function Navbar() {
-  const { firstName, loading } = useUser();
+  const { firstName, loading } = useFirstName();
 
   return (
     <nav className="w-full border-b border-gray-100 bg-white px-6 py-0 shadow-sm">

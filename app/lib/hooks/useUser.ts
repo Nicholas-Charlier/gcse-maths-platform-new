@@ -9,7 +9,8 @@ export function useUser() {
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const user = session?.user;
       if (user) {
         setFirstName(user.user_metadata?.first_name ?? null);
 
