@@ -178,17 +178,12 @@ export default function Home() {
           <p className="mt-6 text-center text-lg text-gray-500 max-w-xl leading-relaxed">
             The complete maths programme designed by an expert tutor to get you ahead of the competition.
           </p>
-          {!loading && (
-            firstName ? (
-              <Link href="/dashboard" className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors">
-                Go to Dashboard
-              </Link>
-            ) : (
-              <Link href="/signup" className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors">
-                Learn with us
-              </Link>
-            )
-          )}
+          <Link
+            href={firstName ? "/dashboard" : "/signup"}
+            className="mt-10 rounded-full bg-blue-300 px-8 py-3 text-white font-semibold text-lg hover:bg-blue-400 transition-colors"
+          >
+            {loading ? "Get started" : firstName ? "Go to Dashboard" : "Learn with us"}
+          </Link>
         </div>
       </section>
 
