@@ -88,7 +88,6 @@ export default function AccountPage() {
           </div>
           <div>
             <p className="font-semibold text-gray-900">{form.firstName} {form.lastName}</p>
-            <p className="text-sm text-gray-500">Student</p>
           </div>
         </div>
 
