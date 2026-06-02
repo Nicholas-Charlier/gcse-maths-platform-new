@@ -105,7 +105,7 @@ export default function UpgradePage() {
     <main className="min-h-screen px-6 py-24">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-black text-gray-900 mb-3">
-          {loading ? "Your plan." : `Your plan, ${firstName}.`}
+          {`Your plan${firstName ? `, ${firstName}` : ""}.`}
         </h1>
         <p className="text-gray-500 text-lg mb-16">
           Upgrade any time. Cancel monthly plans whenever you like.
