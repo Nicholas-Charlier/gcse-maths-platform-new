@@ -50,7 +50,7 @@ export default function AccountPage() {
     setSaveSuccess(true)
     setTimeout(() => {
       window.location.reload()
-    }, 800)
+    }, 700)
   }
 
   const handleResetPassword = async () => {
