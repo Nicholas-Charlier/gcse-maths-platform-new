@@ -1,53 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Settings } from 'lucide-react'
-import { useUser } from '../lib/hooks/useUser'
 import { createBrowserClient } from '@supabase/ssr'
 
 export default function AccountPage() {
-  const { firstName, loading } = useUser()
-  const [fullName, setFullName] = useState<{ first: string; last: string } | null>(null)
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '' })
+  const [initials, setInitials] = useState('??')
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
   const [resetError, setResetError] = useState('')
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '' })
-  const [loaded, setLoaded] = useState(false)
-
-  if (!loaded && !loading) {
-    supabase.auth.getUser().then(({ data }) => {
-      const user = data.user
-      supabase
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: profile } = await supabase
         .from('profiles')
         .select('first_name, last_name')
-        .eq('id', user?.id)
+        .eq('id', user.id)
         .single()
-        .then(({ data: profile }) => {
-          setForm({
-            firstName: profile?.first_name ?? '',
-            lastName: profile?.last_name ?? '',
-            email: user?.email ?? '',
-          })
-          setFullName({
-            first: profile?.first_name ?? '',
-            last: profile?.last_name ?? '',
-          })
-        })
-    })
-    setLoaded(true)
-  }
-
-  const initials = fullName
-    ? `${fullName.first[0] ?? ''}${fullName.last[0] ?? ''}`.toUpperCase()
-    : '??'
+      const first = profile?.first_name ?? ''
+      const last = profile?.last_name ?? ''
+      setForm({ firstName: first, lastName: last, email: user.email ?? '' })
+      setInitials(`${first[0] ?? ''}${last[0] ?? ''}`.toUpperCase())
+      setLoading(false)
+    }
+    load()
+  }, [])
 
   const handleSave = async () => {
     setSaveLoading(true)
@@ -57,7 +45,7 @@ export default function AccountPage() {
       .from('profiles')
       .update({ first_name: form.firstName, last_name: form.lastName })
       .eq('id', user?.id)
-    setFullName({ first: form.firstName, last: form.lastName })
+    setInitials(`${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase())
     setSaveLoading(false)
     setSaveSuccess(true)
     setTimeout(() => setSaveSuccess(false), 3000)
@@ -83,7 +71,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-50 p-8 flex-shrink-0">
+      <div className="w-72 bg-blue-50 p-10 flex-shrink-0">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">Account Settings</h1>
         <div className="flex items-center gap-3 bg-white rounded-xl px-4 py-3">
           <Settings className="w-5 h-5 text-blue-400" />
@@ -92,7 +80,7 @@ export default function AccountPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-12 max-w-2xl">
+      <div className="flex-1 p-12 max-w-xl">
         {/* Avatar + name */}
         <div className="flex items-center gap-4 mb-10">
           <div className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center">

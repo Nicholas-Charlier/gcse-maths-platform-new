@@ -8,8 +8,15 @@ export function useFirstName() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setFirstName(session?.user?.user_metadata?.first_name ?? null);
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name")
+          .eq("id", user.id)
+          .single();
+        setFirstName(profile?.first_name ?? null);
+      }
       setLoading(false);
     });
   }, []);

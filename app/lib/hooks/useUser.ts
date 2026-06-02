@@ -9,17 +9,19 @@ export function useUser() {
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const user = session?.user;
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      console.log('useUser - user:', user)
       if (user) {
-        setFirstName(user.user_metadata?.first_name ?? null);
-
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from("profiles")
-          .select("subscription_tier")
+          .select("first_name, subscription_tier")
           .eq("id", user.id)
           .single();
 
+        console.log('useUser - profile:', profile)
+        console.log('useUser - error:', error)
+
+        setFirstName(profile?.first_name ?? null);
         setSubscriptionTier(profile?.subscription_tier ?? "free");
       }
 
