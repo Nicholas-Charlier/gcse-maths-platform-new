@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { createAdminClient } from "@/app/lib/supabase/server";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 if (!stripeSecretKey) throw new Error("Missing STRIPE_SECRET_KEY");
 if (!webhookSecret) throw new Error("Missing STRIPE_WEBHOOK_SECRET");
