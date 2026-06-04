@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import { Video, BookOpen, Layers, FileText } from 'lucide-react'
 import Breadcrumb from './components/Breadcrumb'

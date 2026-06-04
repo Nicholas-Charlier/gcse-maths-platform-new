@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/app/lib/supabase.ts'
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
@@ -12,10 +12,13 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false)
   const router = useRouter()
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = useMemo(() => createClient(), [])
+
+  useEffect(() => {
+    if (!success) return
+    const timer = setTimeout(() => router.push('/dashboard'), 2000)
+    return () => clearTimeout(timer)
+  }, [success, router])
 
   const handleSubmit = async () => {
     setError('')
@@ -23,8 +26,8 @@ export default function ResetPasswordPage() {
       setError('Passwords do not match.')
       return
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.')
       return
     }
     setLoading(true)
@@ -33,7 +36,6 @@ export default function ResetPasswordPage() {
       setError(error.message)
     } else {
       setSuccess(true)
-      setTimeout(() => router.push('/dashboard'), 2000)
     }
     setLoading(false)
   }

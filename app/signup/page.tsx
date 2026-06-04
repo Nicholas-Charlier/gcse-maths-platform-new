@@ -1,8 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/app/lib/supabase";
+
+const EyeIcon = ({ open }: { open: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    {open ? (
+      <>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ) : (
+      <>
+        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+        <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+        <line x1="1" y1="1" x2="23" y2="23" />
+      </>
+    )}
+  </svg>
+);
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -16,25 +33,40 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const supabase = useMemo(() => createClient(), []);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    const trimmedFirst = firstName.trim();
+    const trimmedLast = lastName.trim();
+
+    if (!trimmedFirst || !trimmedLast) {
+      setError("First and last name cannot be empty.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setLoading(true);
-    const supabase = createClient();
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          first_name: firstName,
-          last_name: lastName,
-          full_name: `${firstName} ${lastName}`,
+          first_name: trimmedFirst,
+          last_name: trimmedLast,
+          full_name: `${trimmedFirst} ${trimmedLast}`,
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
@@ -47,23 +79,6 @@ export default function SignupPage() {
     }
     setLoading(false);
   };
-
-  const EyeIcon = ({ open }: { open: boolean }) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {open ? (
-        <>
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-          <circle cx="12" cy="12" r="3" />
-        </>
-      ) : (
-        <>
-          <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
-          <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
-          <line x1="1" y1="1" x2="23" y2="23" />
-        </>
-      )}
-    </svg>
-  );
 
   return (
     <main className="min-h-screen flex items-center justify-center px-6 bg-white">
@@ -87,7 +102,6 @@ export default function SignupPage() {
             </p>
 
             <form onSubmit={handleSignup} className="flex flex-col gap-4">
-              {/* Name row */}
               <div className="flex gap-3">
                 <div className="flex flex-col gap-1.5 flex-1">
                   <label className="text-sm font-semibold text-gray-700">First name</label>
@@ -113,7 +127,6 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              {/* Email */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-gray-700">Email</label>
                 <input
@@ -126,7 +139,6 @@ export default function SignupPage() {
                 />
               </div>
 
-              {/* Password */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-gray-700">Password</label>
                 <div className="relative">
@@ -149,7 +161,6 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              {/* Confirm password */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-gray-700">Confirm password</label>
                 <div className="relative">

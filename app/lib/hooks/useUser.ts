@@ -1,6 +1,6 @@
 import { useUserContext } from "@/app/lib/context/UserContext";
 
 export function useUser() {
-  const { firstName, subscriptionTier } = useUserContext();
-  return { firstName, subscriptionTier, loading: false };
+  const { firstName, subscriptionTier, loading, refreshUser } = useUserContext();
+  return { firstName, subscriptionTier, loading, refreshUser };
 }

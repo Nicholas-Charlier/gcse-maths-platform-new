@@ -1,23 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Settings } from 'lucide-react'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/app/lib/supabase'
+import { useUser } from '@/app/lib/hooks/useUser'
 
 export default function AccountPage() {
+  const { refreshUser } = useUser()
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '' })
+  const [userId, setUserId] = useState<string | null>(null)
   const [initials, setInitials] = useState('??')
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
   const [resetError, setResetError] = useState('')
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const load = async () => {
@@ -30,34 +31,51 @@ export default function AccountPage() {
         .single()
       const first = profile?.first_name ?? ''
       const last = profile?.last_name ?? ''
+      setUserId(user.id)
       setForm({ firstName: first, lastName: last, email: user.email ?? '' })
       setInitials(`${first[0] ?? ''}${last[0] ?? ''}`.toUpperCase())
       setLoading(false)
     }
     load()
-  }, [])
+  }, [supabase])
 
   const handleSave = async () => {
+    if (!userId) return
+
+    const trimmedFirst = form.firstName.trim()
+    const trimmedLast = form.lastName.trim()
+
+    if (!trimmedFirst || !trimmedLast) {
+      setSaveError('First and last name cannot be empty.')
+      return
+    }
+
     setSaveLoading(true)
     setSaveSuccess(false)
-    const { data: { user } } = await supabase.auth.getUser()
-    await supabase
+    setSaveError('')
+
+    const { error } = await supabase
       .from('profiles')
-      .update({ first_name: form.firstName, last_name: form.lastName })
-      .eq('id', user?.id)
-    setInitials(`${form.firstName[0] ?? ''}${form.lastName[0] ?? ''}`.toUpperCase())
+      .update({ first_name: trimmedFirst, last_name: trimmedLast })
+      .eq('id', userId)
+
+    if (error) {
+      setSaveError('Failed to save changes. Please try again.')
+      setSaveLoading(false)
+      return
+    }
+
+    setInitials(`${trimmedFirst[0] ?? ''}${trimmedLast[0] ?? ''}`.toUpperCase())
     setSaveLoading(false)
     setSaveSuccess(true)
-    setTimeout(() => {
-      window.location.reload()
-    }, 700)
+    await refreshUser()
   }
 
   const handleResetPassword = async () => {
+    if (!form.email) return
     setResetLoading(true)
     setResetError('')
-    const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.auth.resetPasswordForEmail(user?.email ?? '', {
+    const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     })
     if (error) {
@@ -121,6 +139,8 @@ export default function AccountPage() {
             className="border border-gray-100 rounded-xl px-4 py-2.5 text-sm text-gray-400 bg-gray-50 cursor-not-allowed"
           />
         </div>
+
+        {saveError && <p className="text-sm text-red-400 mb-3">{saveError}</p>}
 
         <button
           onClick={handleSave}

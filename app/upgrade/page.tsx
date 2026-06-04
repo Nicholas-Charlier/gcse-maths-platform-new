@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@/app/lib/hooks/useUser";
-import { useRouter } from "next/navigation";
 
 const plans = [
   {
@@ -11,7 +10,6 @@ const plans = [
     price: "£0",
     period: "forever",
     description: "A taster to see what we're about.",
-    priceId: null,
     features: [
       { text: "5 video lessons", included: true },
       { text: "2 exercise sets", included: true },
@@ -30,7 +28,6 @@ const plans = [
     price: "£19.99",
     period: "per month",
     description: "Full access, cancel any time.",
-    priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
     features: [
       { text: "5 video lessons", included: true },
       { text: "2 exercise sets", included: true },
@@ -49,7 +46,6 @@ const plans = [
     price: "£149.99",
     period: "per year",
     description: "Everything, at the best price.",
-    priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID,
     features: [
       { text: "5 video lessons", included: true },
       { text: "2 exercise sets", included: true },
@@ -76,28 +72,38 @@ const CheckIcon = ({ included }: { included: boolean }) => (
 );
 
 export default function UpgradePage() {
-  const { firstName, subscriptionTier, loading } = useUser();
-  const router = useRouter();
+  const { firstName, subscriptionTier, loading, refreshUser } = useUser();
+  const [upgrading, setUpgrading] = useState<string | null>(null);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
   const currentTier = subscriptionTier ?? "free";
 
   useEffect(() => {
-    const handlePageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) window.location.reload();
+    const handlePageShow = async (e: PageTransitionEvent) => {
+      if (e.persisted) await refreshUser();
     };
     window.addEventListener("pageshow", handlePageShow);
     return () => window.removeEventListener("pageshow", handlePageShow);
-  }, []);
+  }, [refreshUser]);
 
-  async function handleUpgrade(priceId: string) {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.history.replaceState(null, "", "/upgrade");
-      window.location.href = data.url;
+  async function handleUpgrade(plan: string) {
+    setUpgrading(plan);
+    setUpgradeError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Checkout failed");
+      if (data.url) {
+        window.history.replaceState(null, "", "/upgrade");
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Upgrade failed:", error);
+      setUpgradeError("Something went wrong. Please try again.");
+      setUpgrading(null);
     }
   }
 
@@ -111,9 +117,14 @@ export default function UpgradePage() {
           Upgrade any time. Cancel monthly plans whenever you like.
         </p>
 
+        {upgradeError && (
+          <p className="text-sm text-red-400 mb-8 text-center">{upgradeError}</p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan) => {
             const isCurrent = currentTier === plan.key;
+            const isUpgrading = upgrading === plan.key;
 
             return (
               <div
@@ -182,14 +193,15 @@ export default function UpgradePage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleUpgrade(plan.priceId!)}
-                    className={`w-full text-center rounded-full py-3 text-sm font-semibold transition-colors ${
+                    onClick={() => handleUpgrade(plan.key)}
+                    disabled={!!upgrading}
+                    className={`w-full text-center rounded-full py-3 text-sm font-semibold transition-colors disabled:opacity-50 ${
                       plan.highlight
                         ? "bg-blue-300 text-white hover:bg-blue-400"
                         : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                     }`}
                   >
-                    Upgrade
+                    {isUpgrading ? "Redirecting..." : "Upgrade"}
                   </button>
                 )}
               </div>

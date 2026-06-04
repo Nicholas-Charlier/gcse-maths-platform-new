@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/lib/supabase";
+import { useUser } from "@/app/lib/hooks/useUser";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,19 +13,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const router = useRouter();
+  const { refreshUser } = useUser();
+
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         const params = new URLSearchParams(window.location.search);
-        const next = params.get("next") || "/dashboard";
-        window.location.href = next;
+        const next = params.get("next");
+        const safePath = next?.startsWith("/") ? next : "/dashboard";
+        window.location.href = safePath;
       } else {
         setChecking(false);
       }
     });
-  }, []);
+  }, [supabase]);
 
   if (checking) return null;
 
@@ -33,15 +37,16 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       setError(error.message);
-    } else {
-      window.location.href = "/dashboard";
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    await refreshUser();
+    router.push("/dashboard");
   };
 
   return (
