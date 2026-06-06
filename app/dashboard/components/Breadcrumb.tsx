@@ -11,16 +11,23 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+    <div className="flex items-center gap-2 text-sm mb-8">
       {items.map((item, index) => (
         <span key={index} className="flex items-center gap-2">
-          {index > 0 && <span className="text-gray-300">→</span>}
+          {index > 0 && (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M5 3l4 4-4 4" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
           {item.href ? (
-            <Link href={item.href} className="hover:text-blue-400 transition-colors">
+            <Link
+              href={item.href}
+              className="text-slate-400 hover:text-slate-600 font-medium transition-colors"
+            >
               {item.label}
             </Link>
           ) : (
-            <span className="text-gray-900 font-medium">{item.label}</span>
+            <span className="text-slate-900 font-semibold">{item.label}</span>
           )}
         </span>
       ))}

@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/app/lib/hooks/useUser";
 import { createClient } from "@/app/lib/supabase";
 
 export default function Navbar() {
   const { firstName, loading, subscriptionTier, refreshUser } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = useMemo(() => createClient(), []);
   const [signingOut, setSigningOut] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -19,6 +22,23 @@ export default function Navbar() {
     router.push("/");
     setSigningOut(false);
   };
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [pathname]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownOpen]);
 
   return (
     <nav
@@ -92,37 +112,57 @@ export default function Navbar() {
 
           {/* POST-LOGIN: greeting + user icon dropdown */}
           {!loading && firstName && (
-            <div className="relative group flex items-center gap-2">
+            <div className="relative flex items-center gap-2" ref={dropdownRef}>
               <span className="text-sm font-medium text-slate-700">Hi, {firstName}</span>
-              <button className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+              <button
+                onClick={() => setDropdownOpen((prev) => !prev)}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                style={{
+                  color: dropdownOpen ? "#0f1c38" : "#475569",
+                  background: dropdownOpen ? "#f1f5f9" : "transparent",
+                }}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                   fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                 </svg>
               </button>
-              <div className="absolute right-0 top-full pt-2 w-44 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+
+              {dropdownOpen && (
                 <div
-                  className="rounded-xl border border-slate-100 bg-white overflow-hidden"
-                  style={{ boxShadow: "0 8px 24px rgba(15,28,56,0.12)" }}
+                  className="absolute right-0 top-full mt-2 w-44 z-50 animate-fadeIn"
                 >
-                  <div className="flex flex-col p-1">
-                    <Link href="/dashboard" className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-500 transition-colors">
-                      Dashboard
-                    </Link>
-                    <Link href="/account" className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-500 transition-colors">
-                      My account
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      disabled={signingOut}
-                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 text-left transition-colors w-full disabled:opacity-50"
-                    >
-                      {signingOut ? "Signing out..." : "Sign out"}
-                    </button>
+                  <div
+                    className="rounded-xl border border-slate-100 bg-white overflow-hidden"
+                    style={{ boxShadow: "0 8px 24px rgba(15,28,56,0.12)" }}
+                  >
+                    <div className="flex flex-col p-1">
+                      <Link
+                        href="/dashboard"
+                        className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-500 transition-colors"
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/account"
+                        className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-500 transition-colors"
+                      >
+                        My account
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        disabled={signingOut}
+                        className="rounded-lg px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 text-left transition-colors w-full disabled:opacity-50"
+                      >
+                        {signingOut ? "Signing out..." : "Sign out"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
