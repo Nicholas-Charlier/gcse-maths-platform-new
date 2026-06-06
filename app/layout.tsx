@@ -1,7 +1,6 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Navbar from "./components/Navbar";
 import "./globals.css";
-import { createClient } from "@/app/lib/supabase/server";
 import { UserProvider } from "@/app/lib/context/UserContext";
 import type { SubscriptionTier } from "@/app/lib/context/UserContext";
 import { cache } from "react";
@@ -20,22 +19,13 @@ const getUser = cache(async () => {
 
   if (!userId) return { firstName: null, subscriptionTier: null };
 
-  const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("first_name, subscription_tier")
-    .eq("id", userId)
-    .single();
-
-  const raw = profile?.subscription_tier;
-  const subscriptionTier: SubscriptionTier = VALID_TIERS.includes(raw)
+  const firstName = headersList.get("x-user-first-name") || null;
+  const raw = headersList.get("x-user-subscription-tier");
+  const subscriptionTier: SubscriptionTier = VALID_TIERS.includes(raw as SubscriptionTier)
     ? (raw as SubscriptionTier)
     : "free";
 
-  return {
-    firstName: profile?.first_name ?? null,
-    subscriptionTier,
-  };
+  return { firstName, subscriptionTier };
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -43,9 +43,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Forward user id to layout so it doesn't need to re-auth
+  // Read profile data straight from JWT claims — no DB call
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-user-id", user.id);
+  requestHeaders.set("x-user-first-name", (user as any).first_name ?? "");
+  requestHeaders.set("x-user-subscription-tier", (user as any).subscription_tier ?? "free");
 
   return NextResponse.next({
     request: { headers: requestHeaders },
