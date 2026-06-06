@@ -15,14 +15,16 @@ const VALID_TIERS = ["free", "monthly", "yearly"] as const;
 
 const getUser = cache(async () => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  
+  // getSession() reads cookie locally — no network call to Supabase Auth
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!user) return { firstName: null, subscriptionTier: null };
+  if (!session?.user) return { firstName: null, subscriptionTier: null };
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("first_name, subscription_tier")
-    .eq("id", user.id)
+    .eq("id", session.user.id)
     .single();
 
   const raw = profile?.subscription_tier;
