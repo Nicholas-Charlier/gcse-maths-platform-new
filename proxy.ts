@@ -43,7 +43,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return response;
+  // Forward user id to layout so it doesn't need to re-auth
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-user-id", user.id);
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {

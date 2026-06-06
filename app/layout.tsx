@@ -5,6 +5,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { UserProvider } from "@/app/lib/context/UserContext";
 import type { SubscriptionTier } from "@/app/lib/context/UserContext";
 import { cache } from "react";
+import { headers } from "next/headers";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -14,17 +15,16 @@ const jakarta = Plus_Jakarta_Sans({
 const VALID_TIERS = ["free", "monthly", "yearly"] as const;
 
 const getUser = cache(async () => {
+  const headersList = await headers();
+  const userId = headersList.get("x-user-id");
+
+  if (!userId) return { firstName: null, subscriptionTier: null };
+
   const supabase = await createClient();
-  
-  // getSession() reads cookie locally — no network call to Supabase Auth
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session?.user) return { firstName: null, subscriptionTier: null };
-
   const { data: profile } = await supabase
     .from("profiles")
     .select("first_name, subscription_tier")
-    .eq("id", session.user.id)
+    .eq("id", userId)
     .single();
 
   const raw = profile?.subscription_tier;
