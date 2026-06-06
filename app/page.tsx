@@ -247,8 +247,6 @@ export default function Home() {
           style={{ background: "radial-gradient(circle,rgba(234,179,8,0.07) 0%,transparent 70%)" }} />
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          
-
           <h1 className="text-5xl md:text-6xl font-black text-white leading-[1.07] tracking-tight max-w-2xl mb-5">
             Get Ahead.<br />Get a <span className="text-blue-400">9.</span>
           </h1>
@@ -265,11 +263,13 @@ export default function Home() {
               {loading ? "Get started" : firstName ? "Go to Dashboard" : "Start for free"}
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#0f1c38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
-            <Link href="/pricing"
-              className="inline-flex items-center text-blue-300 font-semibold text-[15px] px-6 py-3.5 rounded-xl hover:text-blue-200 transition-colors"
-              style={{ border: "1px solid rgba(147,197,253,0.3)" }}>
-              View pricing
-            </Link>
+            {!loading && !firstName && (
+              <Link href="/pricing"
+                className="inline-flex items-center text-blue-300 font-semibold text-[15px] px-6 py-3.5 rounded-xl hover:text-blue-200 transition-colors"
+                style={{ border: "1px solid rgba(147,197,253,0.3)" }}>
+                View pricing
+              </Link>
+            )}
           </div>
         </div>
 
@@ -423,11 +423,13 @@ export default function Home() {
             style={{ boxShadow: "0 4px 16px rgba(15,28,56,0.2)" }}>
             {loading ? "Get started" : firstName ? "Go to Dashboard" : "Start for free"} →
           </Link>
-          <Link href="/pricing"
-            className="inline-flex items-center bg-white text-slate-800 font-semibold text-[15px] px-7 py-3.5 rounded-xl hover:bg-slate-50 transition-colors"
-            style={{ border: "1.5px solid #dde2ea" }}>
-            View pricing
-          </Link>
+          {!loading && !firstName && (
+            <Link href="/pricing"
+              className="inline-flex items-center bg-white text-slate-800 font-semibold text-[15px] px-7 py-3.5 rounded-xl hover:bg-slate-50 transition-colors"
+              style={{ border: "1.5px solid #dde2ea" }}>
+              View pricing
+            </Link>
+          )}
         </div>
       </section>
 
