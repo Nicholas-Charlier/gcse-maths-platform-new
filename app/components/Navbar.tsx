@@ -13,6 +13,7 @@ export default function Navbar() {
   const supabase = useMemo(() => createClient(), []);
   const [signingOut, setSigningOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
@@ -23,12 +24,10 @@ export default function Navbar() {
     setSigningOut(false);
   };
 
-  // Close dropdown on route change
   useEffect(() => {
     setDropdownOpen(false);
   }, [pathname]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     if (!dropdownOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -40,25 +39,27 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <nav
-      className="w-full bg-white/95 backdrop-blur-md border-b border-slate-100 px-6 sticky top-0 z-50"
-      style={{ boxShadow: "0 1px 0 rgba(15,28,56,0.06)" }}
+      className={`w-full px-6 fixed top-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-white/95 backdrop-blur-md border-b border-slate-100" : "bg-transparent border-transparent"
+      }`}
+      style={scrolled ? { boxShadow: "0 1px 0 rgba(15,28,56,0.06)" } : {}}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between h-16">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-slate-900 text-[10px] font-black tracking-wide"
-            style={{ color: "#93c5fd", fontFamily: "'Sora', sans-serif" }}
-          >
-            MWM
-          </div>
           <div className="flex flex-col leading-none gap-px">
-            <span className="text-[9px] font-semibold tracking-[0.2em] text-blue-400 uppercase">Maths with</span>
+            <span className={`text-[11px] font-semibold tracking-[0.2em] uppercase transition-colors duration-300 ${scrolled ? "text-blue-400" : "text-blue-200"}`}>Maths with</span>
             <span
-              className="text-[17px] font-black text-slate-900 tracking-tight leading-none"
+              className={`text-[22px] font-black tracking-tight leading-none transition-colors duration-300 ${scrolled ? "text-slate-900" : "text-white"}`}
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
               Madison
@@ -72,7 +73,7 @@ export default function Navbar() {
             <li>
               <Link
                 href="/meet-madison"
-                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+                className={`px-4 py-2 rounded-lg text-base font-medium transition-all ${scrolled ? "text-slate-600 hover:text-slate-900 hover:bg-slate-50" : "text-white hover:text-white hover:bg-white/10"}`}
               >
                 Meet Madison
               </Link>
@@ -80,7 +81,7 @@ export default function Navbar() {
             <li>
               <Link
                 href="/pricing"
-                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
+                className={`px-4 py-2 rounded-lg text-base font-medium transition-all ${scrolled ? "text-slate-600 hover:text-slate-900 hover:bg-slate-50" : "text-white hover:text-white hover:bg-white/10"}`}
               >
                 Pricing
               </Link>
@@ -96,14 +97,14 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className={`px-4 py-2 text-base font-medium transition-colors ${scrolled ? "text-slate-600 hover:text-slate-900" : "text-white hover:text-white"}`}
               >
                 Log in
               </Link>
-              <div className="h-5 w-px bg-slate-200" />
+              <div className={`h-5 w-px ${scrolled ? "bg-slate-200" : "bg-white/20"}`} />
               <Link
                 href="/signup"
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-colors"
+                className={`rounded-lg px-3.5 py-1.75 text-base font-semibold transition-colors ${scrolled ? "bg-slate-900 text-white hover:bg-slate-800" : "bg-white text-slate-900 hover:bg-white/90"}`}
               >
                 Get started
               </Link>
@@ -113,15 +114,15 @@ export default function Navbar() {
           {/* POST-LOGIN: greeting + user icon dropdown */}
           {!loading && firstName && (
             <div className="relative flex items-center gap-2" ref={dropdownRef}>
-              <span className="text-sm font-medium text-slate-700">Hi, {firstName}</span>
+              <span className={`text-sm font-medium transition-colors duration-300 ${scrolled ? "text-slate-700" : "text-white"}`}>Hi, {firstName}</span>
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
                 aria-expanded={dropdownOpen}
                 aria-haspopup="true"
                 className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
                 style={{
-                  color: dropdownOpen ? "#0f1c38" : "#475569",
-                  background: dropdownOpen ? "#f1f5f9" : "transparent",
+                  color: scrolled ? (dropdownOpen ? "#0f1c38" : "#475569") : "white",
+                  background: dropdownOpen ? (scrolled ? "#f1f5f9" : "rgba(255,255,255,0.15)") : "transparent",
                 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -132,9 +133,7 @@ export default function Navbar() {
               </button>
 
               {dropdownOpen && (
-                <div
-                  className="absolute right-0 top-full mt-2 w-44 z-50 animate-fadeIn"
-                >
+                <div className="absolute right-0 top-full mt-2 w-44 z-50 animate-fadeIn">
                   <div
                     className="rounded-xl border border-slate-100 bg-white overflow-hidden"
                     style={{ boxShadow: "0 8px 24px rgba(15,28,56,0.12)" }}
@@ -169,10 +168,10 @@ export default function Navbar() {
           {/* POST-LOGIN free tier: upgrade button */}
           {!loading && firstName && subscriptionTier === "free" && (
             <>
-              <div className="h-5 w-px bg-slate-200" />
+              <div className={`h-5 w-px ${scrolled ? "bg-slate-200" : "bg-white/20"}`} />
               <Link
                 href="/upgrade"
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-colors"
+                className={`rounded-lg px-3.5 py-1.75 text-base font-semibold transition-colors ${scrolled ? "bg-slate-900 text-white hover:bg-slate-800" : "bg-white text-slate-900 hover:bg-white/90"}`}
               >
                 Upgrade your plan
               </Link>

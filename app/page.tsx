@@ -236,62 +236,36 @@ export default function Home() {
 
       {/* Hero */}
       <section
-        className="relative flex flex-col items-center pt-24 pb-12 px-6 w-full overflow-hidden"
-        style={{ background: "linear-gradient(135deg,#0a1628 0%,#0f1c38 40%,#0d2247 70%,#0a1a3a 100%)" }}
+
+        className="relative flex flex-col items-center justify-center pt-60 pb-76 px-6 w-full overflow-hidden"
+        style={{ backgroundImage: "url('/blue empty classroom.jpeg')", backgroundSize: "cover", backgroundPosition: "center" }}
       >
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(59,130,246,0.18) 0%,transparent 70%)", transform: "translate(-30%,-30%)" }} />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(99,102,241,0.14) 0%,transparent 70%)", transform: "translate(30%,-30%)" }} />
-        <div className="absolute bottom-20 right-20 w-[300px] h-[300px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(234,179,8,0.07) 0%,transparent 70%)" }} />
+
+        <div className="absolute inset-0 bg-black opacity-60" />
+
 
         <div className="relative z-10 flex flex-col items-center text-center">
-          <h1 className="text-5xl md:text-6xl font-black text-white leading-[1.07] tracking-tight max-w-2xl mb-5">
+          <h1 className="text-6xl md:text-7xl font-black text-blue-50 leading-[1.07] tracking-tight max-w-2xl mb-5">
             Get Ahead.<br />Get a <span className="text-blue-400">9.</span>
           </h1>
 
-          <p className="text-lg text-slate-400 max-w-md leading-relaxed mb-10">
-            The complete maths programme designed by an expert tutor to get you ahead of the competition.
+          <p className="text-lg text-white/90 max-w-md leading-relaxed mb-10 font-medium">
+            The complete GCSE and IGCSE maths programme designed by an expert tutor to get you ahead of the competition.
           </p>
 
           <div className="flex items-center gap-3 mb-16">
             <Link
               href={!loading && firstName ? "/dashboard" : "/signup"}
-              className="inline-flex items-center gap-2 bg-white text-slate-900 font-bold text-[15px] px-8 py-3.5 rounded-xl shadow-2xl hover:bg-slate-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-white text-slate-900 font-bold text-[17px] px-8 py-3.5 rounded-xl shadow-2xl hover:bg-slate-50 transition-colors"
             >
               {loading ? "Get started" : firstName ? "Go to Dashboard" : "Start for free"}
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#0f1c38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </Link>
-            {!loading && !firstName && (
-              <Link href="/pricing"
-                className="inline-flex items-center text-blue-300 font-semibold text-[15px] px-6 py-3.5 rounded-xl hover:text-blue-200 transition-colors"
-                style={{ border: "1px solid rgba(147,197,253,0.3)" }}>
-                View pricing
-              </Link>
-            )}
+
           </div>
         </div>
 
-        {/* Floating stat cards */}
-        <div className="relative z-10 w-full max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-          {[
-            { iconBg: "#fef3c7", iconColor: "#f59e0b", icon: "★", num: "Grade 9", desc: "Target grade for every student" },
-            { iconBg: "#dcfce7", iconColor: "#16a34a", icon: "✓", num: "100%", desc: "Full spec coverage, GCSE & IGCSE" },
-            { iconBg: "#ede9fe", iconColor: "#7c3aed", icon: "▦", num: "5", desc: "Resource types in one platform" },
-            { iconBg: "#fee2e2", iconColor: "#ef4444", icon: "⏱", num: "24/7", desc: "Access on any device, any time" },
-          ].map((s) => (
-            <div key={s.num} className="bg-white rounded-2xl p-5 flex flex-col gap-3"
-              style={{ boxShadow: "0 8px 32px rgba(15,28,56,0.2),0 2px 8px rgba(15,28,56,0.08)" }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold"
-                style={{ background: s.iconBg, color: s.iconColor }}>{s.icon}</div>
-              <div>
-                <div className="text-2xl font-black text-slate-900 tracking-tight">{s.num}</div>
-                <div className="text-xs text-slate-500 font-medium leading-snug mt-0.5">{s.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+
       </section>
 
       {/* Why MWM */}
