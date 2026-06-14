@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useFirstName } from "@/app/lib/hooks/useFirstName";
+import Image from "next/image";
 
 const VideoIcon = ({ size = 36 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
@@ -235,12 +236,14 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
 
       {/* Hero */}
-      <section
-
-        className="relative flex flex-col items-center justify-center pt-60 pb-76 px-6 w-full overflow-hidden"
-        style={{ backgroundImage: "url('/blue empty classroom.jpeg')", backgroundSize: "cover", backgroundPosition: "center" }}
-      >
-
+      <section className="relative flex flex-col items-center justify-center pt-60 pb-76 px-6 w-full overflow-hidden">
+        <Image
+          src="/blue empty classroom.jpeg"
+          alt="Classroom background"
+          fill
+          priority
+          className="object-cover object-center"
+        />
         <div className="absolute inset-0 bg-black opacity-60" />
 
 

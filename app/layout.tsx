@@ -6,6 +6,7 @@ import { UserProvider } from "@/app/lib/context/UserContext";
 import type { SubscriptionTier } from "@/app/lib/context/UserContext";
 import { cache } from "react";
 
+
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
