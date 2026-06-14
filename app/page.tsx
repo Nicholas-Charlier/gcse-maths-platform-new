@@ -238,7 +238,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center pt-60 pb-76 px-6 w-full overflow-hidden">
         <Image
-          src="/blue empty classroom.jpeg"
+          src="/classroom.jpeg"
           alt="Classroom background"
           fill
           priority
